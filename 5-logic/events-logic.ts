@@ -7,6 +7,17 @@ dotenv.config({ path: ".env" });
 
 
 
+export async function getSpeseficEvent(email: string, eventId: string) {
+    try {
+    const query = "SELECT * FROM events WHERE userEmail = ? and id = ?;";
+    const [rows] = await execute<EventModel>(query, [email, eventId]);
+    return rows
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+
 export async function getEventsByUser(email: string) {
     try {
     const query = "SELECT * FROM events WHERE userEmail = ?;";

@@ -1,5 +1,5 @@
 import express from "express";
-import { createNewEvent, editEvent, getEventsByUser, getGuestsByUser, submitEventForm } from "../5-logic/events-logic";
+import { createNewEvent, editEvent, getEventsByUser, getGuestsByUser, getSpeseficEvent, submitEventForm } from "../5-logic/events-logic";
 import jwt_decode from "jwt-decode";
 import { UserModel } from "../4-models/UserModel";
 import { EventModel } from "../4-models/EventModel";
@@ -7,8 +7,23 @@ import { GuestModel } from "../4-models/GuestModel";
 
 export const eventsRouter = express.Router();
 
+eventsRouter.get('/speseficEvent/:eventId', async (req, res, next) => {
+  const token = req.headers.authorization;
+  if(!token) res.json("notLogged").status(401)
+    const { email } : UserModel = jwt_decode(token);  
+    console.log(email);
+
+    const eventId = req.params.eventId;
+
+    const event: EventModel = await getSpeseficEvent(email, eventId);
+    if(!event) res.json("Event not found").status(404)
+    console.log(event);
+    res.json(event).status(200);
+  });
+
 eventsRouter.get('/eventsByUser', async (req, res, next) => {
-    const token = req.headers.authorization;
+  const token = req.headers.authorization;
+  if(!token) res.json("notLogged").status(401)
     const { email } : UserModel = jwt_decode(token);  
     console.log(email);
     
@@ -19,7 +34,8 @@ eventsRouter.get('/eventsByUser', async (req, res, next) => {
   
 
 eventsRouter.post('/newEvent', async (req, res, next) => {
-    const token = req.headers.authorization;
+  const token = req.headers.authorization;
+  if(!token) res.json("notLogged - unauthorized").status(401)
     const { email } : UserModel = jwt_decode(token);  
     console.log(email);
 
@@ -34,7 +50,8 @@ eventsRouter.post('/newEvent', async (req, res, next) => {
 
 eventsRouter.put('/editEvent/:eventId', async (req, res, next) => {
   const eventId = req.params.eventId;
-    const token = req.headers.authorization;
+  const token = req.headers.authorization;
+  if(!token) res.json("notLogged").status(401)
     const { email } : UserModel = jwt_decode(token);  
     console.log(email);
 
@@ -48,7 +65,9 @@ eventsRouter.put('/editEvent/:eventId', async (req, res, next) => {
 
 
 eventsRouter.post('/submitEventForm/:eventId', async (req, res, next) => {
-    const eventId = req.params.eventId;
+  const token = req.headers.authorization;
+  if(!token) res.json("notLogged").status(401)
+  const eventId = req.params.eventId;
     const guestInfo: GuestModel = req.body;
     
     const editedGuest: GuestModel = await submitEventForm(guestInfo, eventId);
@@ -58,9 +77,11 @@ eventsRouter.post('/submitEventForm/:eventId', async (req, res, next) => {
   
 
 
-eventsRouter.get('/guestsByEvent', async (req, res, next) => {
-    const { eventId } = req.body;
-    
+eventsRouter.get('/guestsByEvent/:eventId', async (req, res, next) => {
+  const token = req.headers.authorization;
+  if(!token) res.json("notLogged").status(401)
+  const eventId = req.params.eventId;
+
     const guests: GuestModel[] = await getGuestsByUser(eventId);
     console.log(guests);
     res.json(guests).status(200);
@@ -69,7 +90,7 @@ eventsRouter.get('/guestsByEvent', async (req, res, next) => {
   
   
 eventsRouter.get('/test', async (req, res, next) => {
-    res.json("test").status(200);
+  res.json("test").status(200);
   });
   
   
