@@ -55,17 +55,20 @@ export async function createNewEvent(event: EventModel, email: string) {
 }
 
 
-export async function editEvent(event: EventModel, email: string, eventId: string) {
+export async function editEvent(event, email: string, eventId: string) {
     console.log(event);
-    
+
     try {
-        const query = "UPDATE events SET eventType = ?, hallName = ?, name1 = ?, name2 = ?, food = ?, vegetarian = ?, vegan = ?, kids = ?, regular = ?, city = ?, street = ?, eventDate = ?, eventStartHour = ?, imageId = ?, patternId = ?, colorText = ?, iconId = ? WHERE id = ? AND userEmail = ?";
-        const [rows] = await execute<EventModel>(query, [event.eventType, event.hallName, event.name1, event.name2 ?? null, event.food, event.vegetarian, event.vegan, event.kids, event.regular, event.city, event.street, event.eventDate, event.eventStartHour, event.imageId, event.patternId, event.colorText, event.iconId, eventId, email]);
+        const query = "UPDATE events SET eventType = ?, hallName = ?, name1 = ?, name2 = ?, food = ?, vegetarian = ?, vegan = ?, kids = ?, regular = ?, city = ?, street = ?, eventDate = ?, eventStartHour = ?  WHERE id = ? AND userEmail = ?";
+        const [rows] = await execute<EventModel>(query, [event.eventType, event.hallName, event.name1, event.name2 ?? null, event.food, event.vegetarian, event.vegan, event.kids, event.regular, event.city, event.street, event.eventDate, event.eventStartHour, eventId, email]);
         return rows
     } catch (e) {
         console.log(e);
     }
 }
+
+
+  
 
 export async function submitEventForm(guestInfo: GuestModel, eventId: string) {
     try {
