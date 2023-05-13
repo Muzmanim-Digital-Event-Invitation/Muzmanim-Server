@@ -18,7 +18,7 @@ eventsRouter.get('/speseficEvent/:eventId', async (req, res, next) => {
     const event: EventModel = await getSpeseficEvent(email, eventId);
     if(!event) res.json("Event not found").status(404)
     console.log(event);
-    res.json(event).status(200);
+    res.json(event[0]).status(200);
   });
 
 eventsRouter.get('/eventsByUser', async (req, res, next) => {
@@ -48,18 +48,23 @@ eventsRouter.post('/newEvent', async (req, res, next) => {
   
 
 
-eventsRouter.put('/editEvent/:eventId', async (req, res, next) => {
-  const eventId = req.params.eventId;
-  const token = req.headers.authorization;
-  if(!token) res.json("notLogged").status(401)
+eventsRouter.put('/editEventInfo/:eventId', async (req, res, next) => {
+  try {
+
+    const eventId = req.params.eventId;
+    const token = req.headers.authorization;
+    if(!token) res.json("notLogged").status(401)
     const { email } : UserModel = jwt_decode(token);  
     console.log(email);
-
-    const event: EventModel = req.body;
+    
+    const {event} = req.body;
     
     const editedEvent: EventModel = await editEvent(event, email, eventId);
     console.log(editedEvent);
     res.json(editedEvent).status(200);
+  } catch (e) {
+    console.log(e);
+  }
   });
   
 
