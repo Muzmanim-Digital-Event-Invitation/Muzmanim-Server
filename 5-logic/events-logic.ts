@@ -61,7 +61,6 @@ export async function createNewEvent(event: EventModel, email: string) {
     if(event.imageId.includes('data:image')) {
         const generateImageId = uniqid();
         const savedImgToS3 = await saveBase64ImageToS3(event.imageId, generateImageId);
-        console.log(savedImgToS3);
         
         event.imageId = savedImgToS3;
     }
@@ -81,7 +80,6 @@ export async function createNewEvent(event: EventModel, email: string) {
     try {
         const query = "INSERT INTO events (id, userEmail, eventType, hallName, name1, name2, food, vegetarian, vegan, kids, regular, city, street, eventDate, eventStartHour, imageId, background, colorText, iconId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
         const values = [id, email, event.eventType, event.hallName, event.name1, event.name2 ?? "", event.food ? 1 : 0, event.vegetarian ? 1 : 0, event.vegan ? 1 : 0, event.kids ? 1 : 0, event.regular  ? 1 : 0, event.city, event.street, event.eventDate, event.eventStartHour, event.imageId, event.background, event.colorText ?? "", event.iconId ?? ""];
-        console.log(values);
         const [rows] = await execute<EventModel>(query, values);
         return rows
     } catch (e) {
@@ -91,7 +89,6 @@ export async function createNewEvent(event: EventModel, email: string) {
 
 
 export async function editEvent(event, email: string, eventId: string) {
-    console.log(event);
 
     try {
         const query = "UPDATE events SET eventType = ?, hallName = ?, name1 = ?, name2 = ?, food = ?, vegetarian = ?, vegan = ?, kids = ?, regular = ?, city = ?, street = ?, eventDate = ?, eventStartHour = ?  WHERE id = ? AND userEmail = ?";
@@ -106,6 +103,9 @@ export async function editEvent(event, email: string, eventId: string) {
   
 
 export async function submitEventForm(guestInfo: GuestModel, eventId: string) {
+    console.log(guestInfo);
+
+    
     try {
       // Check if the phone number already exists in the database for the given eventId
       const selectQuery = "SELECT id FROM guests WHERE eventId = ? AND phone = ?";
