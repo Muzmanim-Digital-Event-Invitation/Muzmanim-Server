@@ -15,7 +15,8 @@ export interface EventModel {
     eventDate: Date;
     eventStartHour: string;
     imageId: string;
-    patternId: string;
+    background: string;
     colorText: string;
-    iconId: number;
+    iconId: string;
+    image: File;
 }

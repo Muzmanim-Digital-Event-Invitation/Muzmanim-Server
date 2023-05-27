@@ -3,8 +3,20 @@ import * as dotenv from 'dotenv';
 import { EventModel } from "../4-models/EventModel";
 import { GuestModel } from "../4-models/GuestModel";
 import uniqid from "uniqid";
+import { saveBase64ImageToS3, saveImagesToS3 } from "./aws-logic";
 dotenv.config({ path: ".env" });
 
+
+
+export async function getEventDataById(eventId: string) {
+    try {
+    const query = "SELECT * FROM events WHERE id = ?;";
+    const [rows] = await execute<EventModel>(query, [eventId]);
+    return rows
+    } catch (e) {
+        console.log(e);
+    }
+}
 
 
 export async function getSpeseficEvent(email: string, eventId: string) {
@@ -39,15 +51,38 @@ export async function getGuestsByUser(eventId: string) {
     }
 }
 
+function isBase64(str: string) {
+    return Buffer.from(str, 'base64').toString('base64') === str;
+}
+
 
 export async function createNewEvent(event: EventModel, email: string) {
-    // genarate uniqId
+
+    if(event.imageId.includes('data:image')) {
+        const generateImageId = uniqid();
+        const savedImgToS3 = await saveBase64ImageToS3(event.imageId, generateImageId);
+        console.log(savedImgToS3);
+        
+        event.imageId = savedImgToS3;
+    }
+
+    // genarate eventId
     const id = uniqid();
-    console.log(event);
+
     
+    // try {
+    //     const query = "INSERT INTO events (id, userEmail, eventType, hallName, name1, name2, food, vegetarian, vegan, kids, regular, city, street, eventDate, eventStartHour, imageId, background, colorText, iconId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+    //     const [rows] = await execute<EventModel>(query, [id, email, event.eventType, event.hallName, event.name1, event.name2 ?? "", event.food, event.vegetarian, event.vegan, event.kids, event.regular, event.city, event.street, event.eventDate, event.eventStartHour, event.imageId, event.background, event.colorText ?? "", event.iconId ?? ""]);
+    //     return rows
+    // } catch (e) {
+    //     console.log(e);
+    // }
+
     try {
-        const query = "INSERT INTO events (id, userEmail, eventType, hallName, name1, name2, food, vegetarian, vegan, kids, regular, city, street, eventDate, eventStartHour, imageId, patternId, colorText, iconId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
-        const [rows] = await execute<EventModel>(query, [id, email, event.eventType, event.hallName, event.name1, event.name2 ?? null, event.food, event.vegetarian, event.vegan, event.kids, event.regular, event.city, event.street, event.eventDate, event.eventStartHour, event.imageId, event.patternId, event.colorText, event.iconId]);
+        const query = "INSERT INTO events (id, userEmail, eventType, hallName, name1, name2, food, vegetarian, vegan, kids, regular, city, street, eventDate, eventStartHour, imageId, background, colorText, iconId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        const values = [id, email, event.eventType, event.hallName, event.name1, event.name2 ?? "", event.food ? 1 : 0, event.vegetarian ? 1 : 0, event.vegan ? 1 : 0, event.kids ? 1 : 0, event.regular  ? 1 : 0, event.city, event.street, event.eventDate, event.eventStartHour, event.imageId, event.background, event.colorText ?? "", event.iconId ?? ""];
+        console.log(values);
+        const [rows] = await execute<EventModel>(query, values);
         return rows
     } catch (e) {
         console.log(e);
