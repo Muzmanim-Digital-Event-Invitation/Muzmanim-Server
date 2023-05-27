@@ -100,6 +100,20 @@ export async function editEvent(event, email: string, eventId: string) {
 }
 
 
+
+export async function deleteEventById(eventId: string, email: string) {
+
+    try {
+        const query = "DELETE from events WHERE id = ? and userEmail = ?";
+        const [rows] = await execute<EventModel>(query, [eventId, email]);
+        return rows
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+
+
   
 
 export async function submitEventForm(guestInfo: GuestModel, eventId: string) {

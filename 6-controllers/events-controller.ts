@@ -1,5 +1,5 @@
 import express from "express";
-import { createNewEvent, editEvent, getEventDataById, getEventsByUser, getGuestsByUser, getSpeseficEvent, submitEventForm } from "../5-logic/events-logic";
+import { createNewEvent, deleteEventById, editEvent, getEventDataById, getEventsByUser, getGuestsByUser, getSpeseficEvent, submitEventForm } from "../5-logic/events-logic";
 import jwt_decode from "jwt-decode";
 import { UserModel } from "../4-models/UserModel";
 import { EventModel } from "../4-models/EventModel";
@@ -93,6 +93,16 @@ eventsRouter.get('/guestsByEvent/:eventId', async (req, res, next) => {
 
     const guests: GuestModel[] = await getGuestsByUser(eventId);
     res.json(guests).status(200);
+  });
+  
+eventsRouter.delete('/deleteEvent/:eventId', async (req, res, next) => {
+  const token = req.headers.authorization;
+  if(!token) res.json("notLogged").status(401)
+  const { email } : UserModel = jwt_decode(token);  
+  const eventId = req.params.eventId;
+
+    const deletedEvent = await deleteEventById(eventId, email);
+    res.json(deletedEvent).status(200);
   });
   
 
