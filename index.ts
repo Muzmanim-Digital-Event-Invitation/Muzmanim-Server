@@ -6,6 +6,7 @@ import fileUpload from 'express-fileupload';
 import { eventsRouter } from './6-controllers/events-controller';
 
 import * as dotenv from 'dotenv';
+import { authRouter } from './6-controllers/auth-controller';
 dotenv.config({ path: ".env" });
 
 const server = express();
@@ -15,6 +16,7 @@ server.use(fileUpload())
 server.use(logRequest);
 
 server.use(eventsRouter);
+server.use(authRouter);
 
 server.use(catchAll);
 

@@ -48,6 +48,9 @@ eventsRouter.post('/newEvent', async (req, res, next) => {
         res.status(400).json("One of the fields is missing")
     }
     
+    if(event.food === "true" ){
+      
+    }
     const newEvent: EventModel = await createNewEvent(event, email);
     console.log(newEvent);
     res.json(newEvent).status(200);

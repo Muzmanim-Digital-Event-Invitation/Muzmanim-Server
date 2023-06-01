@@ -76,10 +76,12 @@ export async function createNewEvent(event: EventModel, email: string) {
     // } catch (e) {
     //     console.log(e);
     // }
+    console.log(event);
+    
 
     try {
         const query = "INSERT INTO events (id, userEmail, eventType, hallName, name1, name2, food, vegetarian, vegan, kids, regular, city, street, eventDate, eventStartHour, imageId, background, colorText, iconId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
-        const values = [id, email, event.eventType, event.hallName, event.name1, event.name2 ?? "", event.food ? 1 : 0, event.vegetarian ? 1 : 0, event.vegan ? 1 : 0, event.kids ? 1 : 0, event.regular  ? 1 : 0, event.city, event.street, event.eventDate, event.eventStartHour, event.imageId, event.background, event.colorText ?? "", event.iconId ?? ""];
+        const values = [id, email, event.eventType, event.hallName, event.name1, event.name2 ?? "", event.food === 'true' ? 1 : 0, event.vegetarian === 'true' ? 1 : 0, event.vegan === 'true' ? 1 : 0, event.kids === 'true' ? 1 : 0, event.regular === 'true' ? 1 : 0, event.city, event.street, event.eventDate, event.eventStartHour, event.imageId, event.background, event.colorText ?? "", event.iconId ?? ""];
         const [rows] = await execute<EventModel>(query, values);
         return rows
     } catch (e) {

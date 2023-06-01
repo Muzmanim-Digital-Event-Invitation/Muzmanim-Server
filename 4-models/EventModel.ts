@@ -5,11 +5,11 @@ export interface EventModel {
     hallName: string;
     name1: number;
     name2?: number;
-    food: boolean;
-    vegetarian: boolean;
-    vegan: boolean;
-    kids: boolean;
-    regular: boolean;
+    food: boolean | string;
+    vegetarian: boolean | string;
+    vegan: boolean | string;
+    kids: boolean | string;
+    regular: boolean | string;
     city: string;
     street: string;
     eventDate: Date;
