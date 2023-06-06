@@ -1,5 +1,5 @@
 import express from "express";
-import { createNewEvent, deleteEventById, deleteGuestById, editEvent, getEventDataById, getEventsByUser, getGuestsByUser, getSpeseficEvent, submitEventForm } from "../5-logic/events-logic";
+import { createNewEvent, deleteEventById, deleteGuestById, editEvent, editGuest, getEventDataById, getEventsByUser, getGuestsByUser, getSpeseficEvent, submitEventForm, validateUserEmailByEvent } from "../5-logic/events-logic";
 import jwt_decode from "jwt-decode";
 import { UserModel } from "../4-models/UserModel";
 import { EventModel } from "../4-models/EventModel";
@@ -98,7 +98,7 @@ eventsRouter.put('/editEventInfo/:eventId', async (req, res, next) => {
   
 
 
-eventsRouter.post('/submitEventForm/:eventId', async (req, res, next) => {
+  eventsRouter.post('/submitEventForm/:eventId', async (req, res, next) => {
   // const token = req.headers.authorization;
   // if(!token) res.json("notLogged").status(401)
   try {
@@ -110,6 +110,36 @@ eventsRouter.post('/submitEventForm/:eventId', async (req, res, next) => {
     res.json(editedGuest).status(200);
   } catch (e) {
     console.log(e);
+  }
+
+
+  });
+  
+
+eventsRouter.put('/editGuest/:eventId', async (req, res, next) => {
+
+
+  try {
+    const eventId = req.params.eventId;
+    const guestInfo: GuestModel = req.body;
+
+    const token = req.headers.authorization;
+    if (!token) {
+      return res.status(401).json("notLogged - unauthorized");
+    }
+
+    const { email }: UserModel = jwt_decode(token);
+
+    const isAuthorized = await validateUserEmailByEvent(email, eventId);
+    if (isAuthorized) {
+      const editedGuest: GuestModel = await editGuest(guestInfo, eventId);
+      return res.status(200).json(editedGuest);
+    } else {
+      return res.status(401).json("unauthorized");
+    }
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json("internal server error");
   }
   });
   

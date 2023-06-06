@@ -114,6 +114,17 @@ export async function deleteEventById(eventId: string, email: string) {
     }
 }
 
+export async function validateUserEmailByEvent(email: string, eventId: string) {
+    try {
+      const query = "SELECT * FROM events WHERE id = ? AND userEmail = ?";
+      const [rows] = await execute<EventModel[]>(query, [eventId, email]);
+      return rows.length > 0; // Return true if there is a matching event, false otherwise
+    } catch (e) {
+      console.log(e);
+      return false; // Return false if an error occurs
+    }
+  }
+
 
 
 export async function deleteGuestById(guestId: number, eventId: string) {
@@ -155,6 +166,37 @@ export async function submitEventForm(guestInfo: GuestModel, eventId: string) {
       console.log(e);
     }
   }
+
+
+  export async function editGuest(guestInfo: GuestModel, eventId: string) {
+    try {
+      const updateQuery = `
+        UPDATE guests
+        SET firstName = ?, lastName = ?, guestsAmount = ?, phone = ?, isComing = ?, vegetarian = ?, vegan = ?, kids = ?, regular = ?, notes = ?
+        WHERE eventId = ?`;
+      
+      const updateParams = [
+        guestInfo.firstName,
+        guestInfo.lastName,
+        guestInfo.guestsAmount,
+        guestInfo.phone,
+        guestInfo.isComing,
+        guestInfo.vegetarian,
+        guestInfo.vegan,
+        guestInfo.kids,
+        guestInfo.regular,
+        guestInfo.notes,
+        eventId
+      ];
+      
+      const [updateRows] = await execute<GuestModel>(updateQuery, updateParams);
+      return updateRows;
+    } catch (e) {
+      console.log(e);
+      throw new Error("Error editing guest."); // You can handle the error in a more appropriate way if needed.
+    }
+  }
+  
   
 
 // export async function getWordsByUser(userId: number) {
