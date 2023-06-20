@@ -142,52 +142,52 @@ export async function deleteGuestById(guestId: number, eventId: string) {
 
   
 
-// export async function submitEventForm(guestInfo: GuestModel, eventId: string) {
-//     console.log(guestInfo);
+export async function submitEventForm(guestInfo: GuestModel, eventId: string) {
+    console.log(guestInfo);
 
     
-//     try {
-//       // Check if the phone number already exists in the database for the given eventId
-//       const selectQuery = "SELECT id FROM guests WHERE eventId = ? AND phone = ?";
-//       const [selectRows] = await execute<{ id: number }>(selectQuery, [eventId, guestInfo.phone]);
+    try {
+      // Check if the phone number already exists in the database for the given eventId
+      const selectQuery = "SELECT id FROM guests WHERE eventId = ? AND phone = ?";
+      const [selectRows] = await execute<{ id: number }>(selectQuery, [eventId, guestInfo.phone]);
       
-//       if (selectRows.length > 0) {
-//         // Update the existing row
-//         const updateQuery = "UPDATE guests SET firstName = ?, lastName = ?, guestsAmount = ?, isComing = ?, vegetarian = ?, vegan = ?, kids = ?, regular = ?, notes = ? WHERE id = ?";
-//         const [updateRows] = await execute<GuestModel>(updateQuery, [guestInfo.firstName, guestInfo.lastName, guestInfo.guestsAmount, guestInfo.isComing, guestInfo.vegetarian, guestInfo.vegan, guestInfo.kids, guestInfo.regular, guestInfo.notes, selectRows[0].id]);
-//         return updateRows;
-//       } else {
-//         // Insert a new row
-//         const insertQuery = "INSERT INTO guests (eventId, firstName, lastName, guestsAmount, phone, isComing, vegetarian, vegan, kids, regular, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-//         const [insertRows] = await execute<GuestModel>(insertQuery, [eventId, guestInfo.firstName, guestInfo.lastName, guestInfo.guestsAmount, guestInfo.phone, guestInfo.isComing, guestInfo.vegetarian, guestInfo.vegan, guestInfo.kids, guestInfo.regular, guestInfo.notes]);
-//         return insertRows;
-//       }
-//     } catch (e) {
-//       console.log(e);
-//     }
-//   }
-
-export async function submitEventForm(guestInfo: GuestModel, eventId: string) {
-  try {
-    // Check if the phone number already exists in the database for the given eventId
-    const selectQuery = "SELECT phone FROM guests WHERE eventId = ? AND phone = ?";
-    const [selectRows] = await execute<{ phone: string }>(selectQuery, [eventId, guestInfo.phone]);
-
-    if (selectRows.length > 0) {
-      // Update the existing row
-      const updateQuery = "UPDATE guests SET firstName = ?, lastName = ?, guestsAmount = ?, isComing = ?, vegetarian = ?, vegan = ?, kids = ?, regular = ?, notes = ? WHERE phone = ? AND eventId = ?";
-      const [updateRows] = await execute<GuestModel>(updateQuery, [guestInfo.firstName, guestInfo.lastName, guestInfo.guestsAmount, guestInfo.isComing, guestInfo.vegetarian, guestInfo.vegan, guestInfo.kids, guestInfo.regular, guestInfo.notes, selectRows[0].phone, eventId]);
-      return updateRows;
-    } else {
-      // Insert a new row
-      const insertQuery = "INSERT INTO guests (eventId, firstName, lastName, guestsAmount, phone, isComing, vegetarian, vegan, kids, regular, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-      const [insertRows] = await execute<GuestModel>(insertQuery, [eventId, guestInfo.firstName, guestInfo.lastName, guestInfo.guestsAmount, guestInfo.phone, guestInfo.isComing, guestInfo.vegetarian, guestInfo.vegan, guestInfo.kids, guestInfo.regular, guestInfo.notes]);
-      return insertRows;
+      if (selectRows.length > 0) {
+        // Update the existing row
+        const updateQuery = "UPDATE guests SET firstName = ?, lastName = ?, guestsAmount = ?, isComing = ?, vegetarian = ?, vegan = ?, kids = ?, regular = ?, notes = ? WHERE id = ?";
+        const [updateRows] = await execute<GuestModel>(updateQuery, [guestInfo.firstName, guestInfo.lastName, guestInfo.guestsAmount, guestInfo.isComing, guestInfo.vegetarian, guestInfo.vegan, guestInfo.kids, guestInfo.regular, guestInfo.notes, selectRows[0].id]);
+        return updateRows;
+      } else {
+        // Insert a new row
+        const insertQuery = "INSERT INTO guests (eventId, firstName, lastName, guestsAmount, phone, isComing, vegetarian, vegan, kids, regular, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        const [insertRows] = await execute<GuestModel>(insertQuery, [eventId, guestInfo.firstName, guestInfo.lastName, guestInfo.guestsAmount, guestInfo.phone, guestInfo.isComing, guestInfo.vegetarian, guestInfo.vegan, guestInfo.kids, guestInfo.regular, guestInfo.notes]);
+        return insertRows;
+      }
+    } catch (e) {
+      console.log(e);
     }
-  } catch (e) {
-    throw new Error(`Error occurred while submitting event form: ${e.message}`);
   }
-}
+
+// export async function submitEventForm(guestInfo: GuestModel, eventId: string) {
+//   try {
+//     // Check if the phone number already exists in the database for the given eventId
+//     const selectQuery = "SELECT phone FROM guests WHERE eventId = ? AND phone = ?";
+//     const [selectRows] = await execute<{ phone: string }>(selectQuery, [eventId, guestInfo.phone]);
+
+//     if (selectRows.length > 0) {
+//       // Update the existing row
+//       const updateQuery = "UPDATE guests SET firstName = ?, lastName = ?, guestsAmount = ?, isComing = ?, vegetarian = ?, vegan = ?, kids = ?, regular = ?, notes = ? WHERE phone = ? AND eventId = ?";
+//       const [updateRows] = await execute<GuestModel>(updateQuery, [guestInfo.firstName, guestInfo.lastName, guestInfo.guestsAmount, guestInfo.isComing, guestInfo.vegetarian, guestInfo.vegan, guestInfo.kids, guestInfo.regular, guestInfo.notes, selectRows[0].phone, eventId]);
+//       return updateRows;
+//     } else {
+//       // Insert a new row
+//       const insertQuery = "INSERT INTO guests (eventId, firstName, lastName, guestsAmount, phone, isComing, vegetarian, vegan, kids, regular, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+//       const [insertRows] = await execute<GuestModel>(insertQuery, [eventId, guestInfo.firstName, guestInfo.lastName, guestInfo.guestsAmount, guestInfo.phone, guestInfo.isComing, guestInfo.vegetarian, guestInfo.vegan, guestInfo.kids, guestInfo.regular, guestInfo.notes]);
+//       return insertRows;
+//     }
+//   } catch (e) {
+//     throw new Error(`Error occurred while submitting event form: ${e.message}`);
+//   }
+// }
 
 
 
@@ -196,7 +196,7 @@ export async function submitEventForm(guestInfo: GuestModel, eventId: string) {
       const updateQuery = `
         UPDATE guests
         SET firstName = ?, lastName = ?, guestsAmount = ?, phone = ?, isComing = ?, vegetarian = ?, vegan = ?, kids = ?, regular = ?, notes = ?
-        WHERE eventId = ?`;
+        WHERE eventId = ? AND id = ?`;
       
       const updateParams = [
         guestInfo.firstName,
@@ -209,7 +209,8 @@ export async function submitEventForm(guestInfo: GuestModel, eventId: string) {
         guestInfo.kids,
         guestInfo.regular,
         guestInfo.notes,
-        eventId
+        eventId, 
+        guestInfo.id
       ];
       
       const [updateRows] = await execute<GuestModel>(updateQuery, updateParams);
